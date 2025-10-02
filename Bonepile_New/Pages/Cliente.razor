@@ -1,0 +1,56 @@
+﻿@page "/cliente"
+@inject HardRepairService hardService
+@inject IJSRuntime jsRuntime
+
+
+
+<section id="mainContente" style="overflow:hidden">
+    <div class="main-contents" style="text-transform:uppercase !important">
+        <div id="chart" class="boxe"></div>
+    </div>
+</section>
+
+
+
+
+@code {
+    private List<HardRepairModel>? charts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        charts = await hardService.GetChartClienteAsync();
+
+        var result = from c in charts
+
+                     group c by c.Cliente.ToLower() into teste
+                     select new
+                     {
+                         Cliente = teste.Key,
+                         qt = teste.Count()
+                     };
+
+        await jsRuntime.InvokeVoidAsync("createChart8.starts8", result.OrderByDescending(x => x.qt));
+    }
+
+}
+<style>
+
+    .boxe {
+        width: 100%;
+        border-radius: 5px;
+        text-transform: uppercase !important;
+        background-color: #fff;
+        box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    }
+
+    section {
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+        margin-bottom: 10%;
+    }
+
+ 
+    .page {
+        background-color: #F7F7F7;
+    }
+
+</style>

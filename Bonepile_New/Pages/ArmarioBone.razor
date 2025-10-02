@@ -1,0 +1,614 @@
+﻿@page "/armariobone"
+@using System.ComponentModel.DataAnnotations
+
+
+
+@inject Armario_BoneService boneService
+@inject BonepileService bonepileService
+@inject HistoryService historyService
+@inject BancoContext bancoContext
+@inject BancoContext1 bancoContext1
+@inject IJSRuntime JS
+
+
+<main id="mainContent">
+
+    <div class="main-content">
+        <div class="dashboard-contentB">
+            <div class="dashboard-flex-parent">
+                <div class="dashboard-boxB">
+                    <div class="dashboard-box-wrapperB" style="box-shadow: grey 0px 1px 1px">
+
+                      <p style="color:grey">Total</p>
+                        <div class="value" @onclick="AbrirModal" style="cursor:pointer">
+                            <span style="color:grey;font-weight:700;font-size:1rem">
+                                @total
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-boxB">
+                    <div class="dashboard-box-wrapperB" style="box-shadow: darkgrey 0px 1px 1px">
+
+                        <p style="color:darkgrey">Debug 1</p>
+                        <div class="value" @onclick="AbrirModalDebug" style="cursor:pointer">
+                            <span style="color:darkgrey;font-weight:700;font-size:1rem">
+                                @debug
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+               <div class="dashboard-boxB">
+                 
+                        
+                    <div class="dashboard-box-wrapperB" style="box-shadow: #3CB371 0px 1px 1px">
+
+                        <p style="color:#3CB371">0 a 3</p>
+                        <div class="value" @onclick="AbrirModal0a3" style="cursor:pointer">
+                            <span style="color:#3CB371;font-weight:700;font-size:1rem">
+                           
+                            @resultado0a3
+                        
+                            </span>
+
+                        </div>
+                    </div>
+                   
+                </div>
+                <div class="dashboard-boxB">
+                    <div class="dashboard-box-wrapperB" style="box-shadow: #FFA500 0px 1px 1px">
+
+                        <p style="color:#FFA500">4 a 7</p>
+                        <div class="value" @onclick="AbrirModal4a7" style="cursor:pointer">
+                            <span style="color:#FFA500;font-weight:700;font-size:1rem">
+                                @resultado4a7
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-boxB">
+                    <div class="dashboard-box-wrapperB" style="box-shadow: #FF8C00 0px 1px 1px">
+
+                        <p style="color:#FF8C00">8 a 14</p>
+                        <div class="value" @onclick="AbrirModal8a14" style="cursor:pointer">
+                            <span style="color:#FF8C00;font-weight:700;font-size:1rem" >
+                                @resultado8a14
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-boxB">
+                    <div class="dashboard-box-wrapperB" style="box-shadow: #FF6347 0px 1px 1px">
+
+                        <p style="color:#FF6347">15 a 30</p>
+                        <div class="value" @onclick="AbrirModal15a30" style="cursor:pointer">
+                            <span style="color:#FF6347;font-weight:700;font-size:1rem">
+                                @resultado15a30
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-boxB">
+                    <div class="dashboard-box-wrapperB" style="box-shadow: #FF4500 0px 1px 1px">
+
+                        <p style="color:#FF4500">31 a 60</p>
+                        <div class="value" @onclick="AbrirModal31a60" style="cursor:pointer">
+                            <span style="color:#FF4500;font-weight:700;font-size:1rem">
+                                @resultado31a60
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+                     
+                   
+                    
+
+                <div class="dashboard-boxB">
+                    <div class="dashboard-box-wrapperB" style="box-shadow: #FF0000 0px 1px 1px">
+                        <p style="color:#FF0000">> 60</p>
+                        <div class="value" @onclick="AbrirModal60" style="cursor:pointer">
+                            <span style="color:#FF0000;font-weight:700;font-size:1rem">
+                                @resultado60
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div>
+    <div class="main-contents">
+        <div class="dashboard-contentG">
+            <div class="dashboard-flex-parent">
+
+
+                <MatButton Unelevated="true" Style="width:165px;background:#0aabba" OnClick="AbrirModalEntrada">Board In</MatButton>
+
+
+
+
+                <MatButton Unelevated="true" Style="width:165px;background:#f76157">Board Out</MatButton>
+
+
+
+
+
+
+                <MatButton Unelevated="true" Style="width:165px;background:#faba32">Alterar Status</MatButton>
+
+
+
+
+
+                <MatButton Unelevated="true" Style="width:165px;background:#cdbdae">Reports</MatButton>
+
+
+
+                <MatButton Unelevated="true" Style="width:165px;background:#038bbb">Inventario</MatButton>
+                    
+  
+
+            </div>
+        </div>
+    </div>
+</div>                    
+                           
+
+<table style="text-align:center;margin-bottom:10px">
+    <thead>
+        <tr>
+            @for (int i = 0; i < armarios?.Count; i++)
+            {
+                <th style="background-color:#6A5ACD;height:45px;color:#fff;border:solid 1px #fff">@armarios[i].name</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for(int s = 0; s < model.qtda_Gavetas;s ++)
+        {
+            int total = armarios[0].qtda_Gavetas;
+            int restante = total - (model.qtda_Gavetas - (s + 1 ));
+
+            <tr style="width:100%;color:#A9A9A9;background-color:#E6E6FA;">
+                @for (int i = 0; i < armarios.Count; i++)
+                {
+                    
+                    string gaveta = Convert.ToString(restante);
+                    string ar = String.Concat(armarios[i].name, '-', (s + 1));
+                   
+
+                    @if(list.Contains(ar))
+                    {
+                        <td class="gav_oc" @onclick="()=>AbrirModalGaveta(ar)" style="width:100px;height:40px;border:1px solid #cdcdcd;color:#fff;background:#A9A9A9;cursor:pointer"> @gaveta </td>
+                      
+                    }
+                    else
+                    {
+                        <td class="td_ar" style="width:100px;height:40px;border:1px solid #cdcdcd;width:100px;height:40px;"> @gaveta</td>
+                    }
+                }
+
+            </tr>
+        }
+    </tbody>
+          
+         
+</table>
+
+
+<Modal Title="Total de placas" IsVisible="@mostrarModalTotal" OnClose="@FecharModalTotal">
+    @if (boneIn != null)
+    {
+        <MatTable Items="@boneIn" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serial_Number" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Local</th>
+                <th>Serialnumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Modelo</th>
+                <th>Ação</th>
+                <th>Falha</th>
+                <th>Data</th>
+                <th>Aging</th>
+                <th>Valor</th>
+
+            </MatTableHeader>
+            <MatTableRow>
+             
+                <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Modelo</td>
+                <td>@context.Acao</td>
+                <td>@context.Falha</td>
+                <td>@context.Entrada</td>
+                <td>@context.Aging</td>
+                <td>@context.Valor</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+   
+</Modal>
+
+<Modal Title="Total de placas Debug" IsVisible="@mostrarModalDebug" OnClose="@FecharModalDebug">
+    @if (debug1 != null)
+    {
+        <MatTable Items="@debug1" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serial_Number" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Local</th>
+                <th>Serialnumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Modelo</th>
+                <th>Ação</th>
+                <th>Falha</th>
+                <th>Data</th>
+                <th>Aging</th>
+                <th>Valor</th>
+
+            </MatTableHeader>
+            <MatTableRow>
+
+                <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Modelo</td>
+                <td>@context.Acao</td>
+                <td>@context.Falha</td>
+                <td>@context.Entrada</td>
+                <td>@context.Aging</td>
+                <td>@context.Valor</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+</Modal>
+
+<Modal Title="Total de placas 0 a 3" IsVisible="@mostrarModal0a3" OnClose="@FecharModal0a3">
+    @if (range0a3 != null)
+    {
+        <MatTable Items="@range0a3" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serial_Number" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Local</th>
+                <th>Serialnumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Modelo</th>
+                <th>Ação</th>
+                <th>Falha</th>
+                <th>Data</th>
+                <th>Aging</th>
+                <th>Valor</th>
+
+            </MatTableHeader>
+            <MatTableRow>
+
+                <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Modelo</td>
+                <td>@context.Acao</td>
+                <td>@context.Falha</td>
+                <td>@context.Entrada</td>
+                <td>@context.Aging</td>
+                <td>@context.Valor</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+</Modal>
+
+<Modal Title="Total de placas 4 a 7" IsVisible="@mostrarModal4a7" OnClose="@FecharModal4a7">
+    @if (range4a7 != null)
+    {
+        <MatTable Items="@range4a7" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serial_Number" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Local</th>
+                <th>Serialnumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Modelo</th>
+                <th>Ação</th>
+                <th>Falha</th>
+                <th>Data</th>
+                <th>Aging</th>
+                <th>Valor</th>
+
+            </MatTableHeader>
+            <MatTableRow>
+
+                <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Modelo</td>
+                <td>@context.Acao</td>
+                <td>@context.Falha</td>
+                <td>@context.Entrada</td>
+                <td>@context.Aging</td>
+                <td>@context.Valor</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+</Modal>
+
+<Modal Title="Total de placas 8 a 14" IsVisible="@mostrarModal8a14" OnClose="@FecharModal8a14">
+    @if (range8a14 != null)
+    {
+        <MatTable Items="@range8a14" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serial_Number" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Local</th>
+                <th>Serialnumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Modelo</th>
+                <th>Ação</th>
+                <th>Falha</th>
+                <th>Data</th>
+                <th>Aging</th>
+                <th>Valor</th>
+
+            </MatTableHeader>
+            <MatTableRow>
+
+                <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Modelo</td>
+                <td>@context.Acao</td>
+                <td>@context.Falha</td>
+                <td>@context.Entrada</td>
+                <td>@context.Aging</td>
+                <td>@context.Valor</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+</Modal>
+<Modal Title="Total de placas 15 a 30" IsVisible="@mostrarModal15a30" OnClose="@FecharModal15a30">
+    @if (range15a30 != null)
+    {
+        <MatTable Items="@range15a30" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serial_Number" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Local</th>
+                <th>Serialnumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Modelo</th>
+                <th>Ação</th>
+                <th>Falha</th>
+                <th>Data</th>
+                <th>Aging</th>
+                <th>Valor</th>
+
+            </MatTableHeader>
+            <MatTableRow>
+
+                <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Modelo</td>
+                <td>@context.Acao</td>
+                <td>@context.Falha</td>
+                <td>@context.Entrada</td>
+                <td>@context.Aging</td>
+                <td>@context.Valor</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+</Modal>
+
+<Modal Title="Total de placas 31 a 60" IsVisible="@mostrarModal31a60" OnClose="@FecharModal31a60">
+    @if (range31a60 != null)
+    {
+        <MatTable Items="@range31a60" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serial_Number" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Local</th>
+                <th>Serialnumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Modelo</th>
+                <th>Ação</th>
+                <th>Falha</th>
+                <th>Data</th>
+                <th>Aging</th>
+                <th>Valor</th>
+
+            </MatTableHeader>
+            <MatTableRow>
+
+                <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Modelo</td>
+                <td>@context.Acao</td>
+                <td>@context.Falha</td>
+                <td>@context.Entrada</td>
+                <td>@context.Aging</td>
+                <td>@context.Valor</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+</Modal>
+<Modal Title="Total de placas > 60" IsVisible="@mostrarModal60" OnClose="@FecharModal60">
+    @if (range60 != null)
+    {
+        <MatTable Items="@range60" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serial_Number" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Local</th>
+                <th>Serialnumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Modelo</th>
+                <th>Ação</th>
+                <th>Falha</th>
+                <th>Data</th>
+                <th>Aging</th>
+                <th>Valor</th>
+
+            </MatTableHeader>
+            <MatTableRow>
+
+                <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Modelo</td>
+                <td>@context.Acao</td>
+                <td>@context.Falha</td>
+                <td>@context.Entrada</td>
+                <td>@context.Aging</td>
+                <td>@context.Valor</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+</Modal>
+<Modal Title="Gaveteiro" IsVisible="@mostrarModalGaveteiro" OnClose="@FecharModalGaveteiro">
+    @if (gaveteiro != null)
+    {
+        <MatTable Items="@gaveteiro" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serial_Number" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Local</th>
+                <th>Serialnumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Modelo</th>
+                <th>Ação</th>
+                <th>Falha</th>
+                <th>Data</th>
+                <th>Aging</th>
+                <th>Valor</th>
+
+            </MatTableHeader>
+            <MatTableRow>
+
+                <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Modelo</td>
+                <td>@context.Acao</td>
+                <td>@context.Falha</td>
+                <td>@context.Entrada</td>
+                <td>@context.Aging</td>
+                <td>@context.Valor</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+    <p style="color:#a9a9a9 !important;margin-top:10px">Total de @gaveteiro.Count() placa(s)</p>
+</Modal>
+
+
+
+<Modal Title="Entrada de placas" IsVisible="@mostrarModalEntrada" OnClose="@FecharModalEntrada" >
+    @if (resultado != null)
+    {
+        <EditForm Model="resultado" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+
+            <div class="mat-layout-grid">
+                <div class="mat-layout-grid-inner">
+
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        <p>
+                        <MatTextField Label="Serialnumber" @bind-Value="serial"   OnFocusOut="@(() => BuscaInfo(@serial))"/>
+                          
+                        </p>
+                    </div>
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        <p>
+                            <MatTextField Label="Partnumber" @bind-Value="@partnumber" ReadOnly/>
+               
+                        </p>
+                    </div>
+
+                       <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        <p>
+                            <MatTextField Label="Cliente" @bind-Value="@cliente"  ReadOnly/>
+                        </p>
+                    </div>
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        <p>
+                            <MatTextField Label="Modelo" @bind-Value="@modelo" ReadOnly/>
+                        </p>
+                    </div>
+
+           
+                   <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                        <p>
+                             <MatTextField Label="Falha" @bind-Value="@falha" />
+                        </p>
+                    </div>
+                         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                        <p>
+                             <MatTextField Label="Local" @bind-Value="@local" disabled="@(falha != "" ? false : true)" minlength="3" maxlength="3" />
+                        </p>
+                    </div>
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                         <MatSelect Label="Selecione uma ação" @bind-Value="@acao" [disabled]="@(local != "" ? false : true)">
+                            <MatOptionString Value="" ></MatOptionString>
+                            <MatOptionString Value="ANÁLISE">ANÁLISE</MatOptionString>
+                            <MatOptionString Value="AGUARDANDO COMPONENTE">AGUARDANDO COMPONENTE</MatOptionString>
+                            <MatOptionString Value="A/C ENGENHARIA">A/C ENGENHARIA</MatOptionString>
+                            <MatOptionString Value="BACKING">BACKING</MatOptionString>
+                            <MatOptionString Value="REPARO">REPARO</MatOptionString>
+                            <MatOptionString Value="SCRAP">SCRAP</MatOptionString>
+                            <MatOptionString Value="TESTE">TESTE</MatOptionString>
+                        </MatSelect>
+                    </div>
+              
+
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12" style="display:flex;justify-content:center">
+                         <MatButton Type="submit" Raised="true" Style="width:500px;background:#40957f" disabled="@(acao != null ? false : true)">Salvar</MatButton>
+                       @*   <MatButton Raised="true" Style="width:300px;background:#878286" OnClick="FecharModalEntrada" disabled="@(acao != null ? false : true)">Cancelar</MatButton> *@
+                    </div>
+                </div>
+            
+            </div>
+
+        </EditForm>
+    }
+
+</Modal>
+
+

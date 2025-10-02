@@ -1,0 +1,67 @@
+﻿@page "/clientegeral"
+@inject HardRepairService hardService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager Navigation
+
+<h3 class="mb-5">Report Geral Hard Repair</h3>
+
+<div class="mb-lg-5">
+
+    <MatDatePicker @bind-Value="dataInicio" Label="Data Início" />
+    <MatDatePicker @bind-Value="dataFim" Label="Data Fim" class="inpu" />
+    <MatButton Unelevated="true" class="button" OnClick="Consultar">Consultar</MatButton>
+    <MatButton Unelevated="false" class="button" OnClick="Limpar">limpar pesquisa</MatButton>
+</div>
+
+
+
+<section id="mainContente" style="overflow:hidden">
+    <div class="main-contents" style="text-transform:uppercase !important">
+        <div id="chart" class="boxe"></div>
+    </div>
+</section>
+
+@code {
+    private DateTime? dataInicio;
+    private DateTime? dataFim;
+
+
+    private List<HardRepairModel>? chart;
+    private HardRepairModel repairr = new HardRepairModel();
+
+
+    private async Task Consultar()
+    {
+        if (dataInicio.HasValue && dataFim.HasValue)
+        {
+            chart = await hardService.GetGeral(dataInicio.Value.Date, dataFim.Value.Date);
+            var result = from c in chart
+
+                         group c by c.Cliente.ToLower() into teste
+                         select new
+                         {
+                             Cliente = teste.Key,
+                             qt = teste.Count()
+                         };
+
+            await jsRuntime.InvokeVoidAsync("createChart9.starts9", result.OrderByDescending(x => x.qt));
+        }
+
+    }
+
+    private void Limpar()
+    {
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+}
+<style>
+
+    section {
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+        margin-bottom: 2%;
+    }
+
+    .page {
+        background-color: #F7F7F7;
+    }
+</style>

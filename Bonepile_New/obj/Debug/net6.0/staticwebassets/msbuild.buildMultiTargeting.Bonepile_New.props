@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Bonepile_New.props" />
+</Project>

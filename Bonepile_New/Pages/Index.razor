@@ -1,0 +1,476 @@
+﻿@page "/"
+@using Bonepile_New.Models
+@using Bonepile_New.Services
+@using System.ComponentModel.DataAnnotations
+@inject BonepileService bonepileService
+@inject BonepileChartService bonepileChartService
+@inject HttpClient Http
+@inject IJSRuntime jsRuntime
+
+
+@* <PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" /> *@
+@* <p>@cards</p> *@
+
+@* <h3>Sales Dashboard</h3>
+
+@if (cards == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Sales Amount</th>
+                <th>Sales Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sale in cards)
+            {
+                <tr>
+                    <td>@sale.Aging</td>
+                    <td>@sale.Almoxarifado</td>
+                    <td>@sale.Data_Insercao.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} *@
+
+<main id="mainContent">
+    <div class="main-content">
+        <div class="dashboard-content">
+            <div class="dashboard-flex-parent">
+                <div class="dashboard-box">
+                    <div class="dashboard-box-wrapper">
+                        <p class="almox">Almoxarifado 801</p>
+                        <div class="box-icon valor">
+                            <p class="oi oi-dollar var">
+                                variação hoje :<strong style="color:@MyColor;margin-right:7px"> $ @cards?[0].Preco_Medio_Mensal_Em_USD.ToString("f")</strong>
+
+                                @if (cards?[0].Preco_Medio_Mensal_Em_USD < 0)
+                                {
+                                    <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                                }
+                                else if (cards?[0].Preco_Medio_Mensal_Em_USD > 0)
+                                {
+                                    <span class="oi oi-caret-top" style="color:red"></span>
+                                }
+                                else
+                                {
+                                    <span class="oi oi-caret-top" style="display:none"></span>
+                                }
+
+                            </p>
+                        </div>
+                        <div class="value">
+                            <span class="oi oi-cart qty"> variação quantidade : <storng style="margin-right:7px;color:@MyColorQty">@cards?[0].Id</storng>
+
+                                @if (cards?[0].Id < 0)
+                                {
+                                    <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                                }
+                                else if (cards?[0].Id > 0)
+                                {
+                                    <span class="oi oi-caret-top" style="color:red"></span>
+                                }
+                                else
+                                {
+                                    <span class="oi oi-caret-top" style="display:none"></span>
+                                }
+
+                            </span>
+                        </div>
+                        @if(cards?[0].Preco_Medio_Mensal_Em_USD < 0)
+                        {
+                        <div class="type">
+                           <img src="/images/feliz.png" height="50" width="50"/>
+                        </div>
+                            
+                        }
+                        else if (cards?[0].Preco_Medio_Mensal_Em_USD > 0)
+                        {
+                            <div class="type">
+                                <img src="/images/rosto-triste.png" height="50" width="50" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="type">
+                                <img src="/images/neutro.png" height="50" width="50" />
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="dashboard-box">
+                    <div class="dashboard-box-wrapper">
+                        <p class="almox">Almoxarifado 802</p>
+                        <div class="box-icon valor">
+                            <p class="oi oi-dollar var">
+                                variação hoje : <strong style="color:@MyColor1;margin-right:7px">$ @cards802?[0].Preco_Medio_Mensal_Em_USD.ToString("f")</strong>
+
+                                @if(cards802?[0].Preco_Medio_Mensal_Em_USD < 0)
+                                {
+                                    <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                                }
+                                else if (cards802?[0].Preco_Medio_Mensal_Em_USD > 0)
+                                {
+                                    <span class="oi oi-caret-top" style="color:red"></span>
+                                }
+                                else
+                                {
+                                    <span class="oi oi-caret-top" style="display:none"></span>
+                                }
+                            </p>
+                        </div>
+                            
+                        <div class="value">
+                            <span class="oi oi-cart qty"> variação quantidade : <strong style="margin-right:7px;color:@MyColorQty1">@cards802?[0].Id</strong>
+                              @if (cards802?[0].Id < 0)
+                              {
+                                    <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                              }
+                                else if (cards802?[0].Id > 0)
+                              {
+                                    <span class="oi oi-caret-top" style="color:red"></span>
+                              }
+                              else
+                              {
+                                <span class="oi oi-caret-top" style="display:none"></span>
+                              }
+ 
+                            </span>
+
+                        </div>
+                            
+                            
+                        @if (cards802?[0].Preco_Medio_Mensal_Em_USD < 0)
+                        {
+                            <div class="type">
+                                <img src="/images/feliz.png" height="50" width="50" />
+                            </div>
+
+                        }
+                        else if (cards802?[0].Preco_Medio_Mensal_Em_USD > 0)
+                        {
+                            <div class="type">
+                                <img src="/images/rosto-triste.png" height="50" width="50" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="type">
+                                <img src="/images/neutro.png" height="50" width="50" />
+                            </div>
+                        }
+
+                 
+                    </div>
+                </div>
+                <div class="dashboard-box">
+                    <div class="dashboard-box-wrapper">
+                        <p class="almox">Almoxarifado Matrepai</p>
+                        <div class="box-icon valor">
+                            <p class="oi oi-dollar var">
+                                variação hoje : <strong style="color:@MyColor2;margin-right:7px">$ @matrepai?[0].Preco_Medio_Mensal_Em_USD.ToString("f") </strong>
+                                 @if (matrepai?[0].Preco_Medio_Mensal_Em_USD < 0)
+                                 {
+                                     <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                                 }
+                                else if (matrepai?[0].Preco_Medio_Mensal_Em_USD > 0)
+                                 {
+                                     <span class="oi oi-caret-top" style="color:red"></span>
+                                 }
+                                 else
+                                 {
+                                <span class="oi oi-caret-top" style="display:none"></span>
+                                 }
+                             </p>
+                        </div>
+                        <div class="value">
+                            <span class="oi oi-cart qty"> variação quantidade : <strong style="margin-right:7px;color:@MyColorQty2">@matrepai?[0].Id</strong>
+
+                                @if (matrepai?[0].Id < 0)
+                                {
+                                    <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                                }
+                                else if (matrepai?[0].Id > 0)
+                                {
+                                    <span class="oi oi-caret-top" style="color:red"></span>
+                                }
+                                else
+                                {
+                                <span class="oi oi-caret-top" style="display:none"></span>
+                                }
+                            
+                            </span>
+
+                        </div>                                       
+
+                        @if (matrepai?[0].Preco_Medio_Mensal_Em_USD < 0)
+                        {
+                            <div class="type">
+                                <img src="/images/feliz.png" height="50" width="50" />
+                            </div>
+
+                        }
+                        else if (matrepai?[0].Preco_Medio_Mensal_Em_USD > 0)
+                        {
+                            <div class="type">
+                                <img src="/images/rosto-triste.png" height="50" width="50" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="type">
+                                <img src="/images/neutro.png" height="50" width="50" />
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <div class="dashboard-box">
+                    <div class="dashboard-box-wrapper">
+                        <p class="almox">Almoxarifado MatrepaiP09</p>
+                        <div class="box-icon valor">
+                            <p class="oi oi-dollar var">
+                                variação hoje : <strong style="color:@MyColor3;margin-right:7px">$ @matrepaiP09?[0].Preco_Medio_Mensal_Em_USD.ToString("f")</strong>
+
+                                @if (matrepaiP09?[0].Preco_Medio_Mensal_Em_USD < 0)
+                                {
+                                    <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                                }
+                                else if (matrepaiP09?[0].Preco_Medio_Mensal_Em_USD > 0)
+                                {
+                                    <span class="oi oi-caret-top" style="color:red"></span>
+                                }
+                                else
+                                {
+                                    <span class="oi oi-caret-top" style="display:none"></span>
+                                }
+
+                            </p>
+
+                        </div>
+                        <div class="value">
+                            <span class="oi oi-cart qty"> variação quantidade : <strong style="margin-right:7px;color:@MyColorQty3">@matrepaiP09?[0].Id</strong>
+                                @if (matrepaiP09?[0].Id < 0)
+                                {
+                                    <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                                }
+                                else if (matrepaiP09?[0].Id > 0)
+                                {
+                                    <span class="oi oi-caret-top" style="color:red"></span>
+                                }
+                                else
+                                {
+                                    <span class="oi oi-caret-top" style="display:none"></span>
+                                }
+
+                            </span>
+
+                        </div>
+                        @if (matrepaiP09?[0].Preco_Medio_Mensal_Em_USD < 0)
+                        {
+                            <div class="type">
+                                <img src="/images/feliz.png" height="50" width="50" />
+                            </div>
+
+                        }
+                        else if (matrepaiP09?[0].Preco_Medio_Mensal_Em_USD > 0)
+                        {
+                            <div class="type">
+                                <img src="/images/rosto-triste.png" height="50" width="50" />
+                            </div>
+                        }
+                        else
+                        {
+                        <div class="type">
+                            <img src="/images/neutro.png" height="50" width="50" />
+                        </div>
+                        }
+          
+                    </div>
+                </div>
+
+                <div class="dashboard-box">
+                    <div class="dashboard-box-wrapper">
+                        <p class="almox">Almoxarifado Matrepai P12</p>
+                        <div class="box-icon valor">
+                            <p class="oi oi-dollar var">
+                                variação hoje : <strong style="color:@MyColor4;margin-right:7px">$ @resultMtrP12.ToString("f")</strong>
+
+
+                                @if (resultMtrP12 < 0)
+                                {
+                                    <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                                }
+                                else if (@resultMtrP12 > 0)
+                                {
+                                    <span class="oi oi-caret-top" style="color:red;"></span>
+                                }
+                                else
+                                {
+                                    <span class="oi oi-caret-top" style="display:none"></span>
+                                } 
+
+                            </p>
+
+                        </div>
+                            
+                        <div class="value">
+                            <span class="oi oi-cart qty">
+                                variação quantidade : <strong style="margin-right:7px;color:@MyColorQty4"> @quantidadeMtrP12 </strong>
+                                @if (quantidadeMtrP12 < 0)
+                                {
+                                    <span class="oi oi-caret-bottom" style="color:darkgreen"></span>
+                                }
+                                else if (quantidadeMtrP12 > 0)
+                                {
+                                    <span class="oi oi-caret-top" style="color:red"></span>
+                                }
+                                else
+                                {
+                                <span class="oi oi-caret-top" style="color:red;display:none"></span>
+                                }
+                            </span>
+
+                        </div>
+                        @if (resultMtrP12 < 0)
+                        {
+                            <div class="type">
+                                <img src="/images/feliz.png" height="50" width="50" />
+                            </div>
+
+                        }
+                        else if (resultMtrP12 > 0)
+                        {
+                            <div class="type">
+                                <img src="/images/rosto-triste.png" height="50" width="50" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="type">
+                                <img src="/images/neutro.png" height="50" width="50" />
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-content" style="display:none">
+        @if (cards == null)
+        {
+            <p><em>Carregando...</em></p>
+        }
+        else
+        {
+            <div class="card-deck">
+                @foreach (var card in cards)
+                {
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@card.Almoxarifado</h5>
+                            <p class="card-text">@card.Local</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+</main>
+<section id="mainContente" style="overflow:hidden">
+    <div class="main-contents">
+        <div id="chart" class="boxe"></div>
+        <div id="chart802" class=" boxe"></div>
+        <div id="donut" class="boxe"></div>
+    </div>
+    <div class="main-contents">
+        <div id="chartmtr" class="boxe"></div>
+        <div id="chartmtrp09" class="boxe"></div>
+        <div id="chartmtrp12" class="boxe"></div>
+       
+    </div>
+    <div class="main-contents">
+
+     
+       
+    </div>
+ 
+</section>
+
+
+      
+
+    
+
+<style>
+    .dash{
+        margin-top:40px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .dashboard{
+        width: 100%;
+        max-width: 500px;
+        height:200px;
+        padding-top: 10%;
+        position: relative;
+        margin: 0 10px;
+        padding-bottom: 20px;
+    
+    }
+    .almox{
+        font-size:.8rem;
+    }
+
+    .main-contents{
+/*         display:flex;
+        width:100%;
+        background:#fff;
+        border-radius:15px; */
+        gap:2%; 
+        margin-top:2%;
+        display: flex;
+        width:100%;
+        flex-direction: row;
+        align-items: center;
+    
+    }
+    .boxe{
+      width:100%;
+      border-radius:5px;
+  
+   /*      position: absolute;
+      /*   top: 0;
+        left: 0; */
+      /*   width: 100%; */
+       /*  height: 100%; */
+       /*  display: flex; */
+       /*  flex-direction: column; */
+        /*  align-items: center;
+        justify-content: center;*/
+        background-color: #fff;
+        /* box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset; */
+        box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    }
+</style>
+
+@code{
+
+}

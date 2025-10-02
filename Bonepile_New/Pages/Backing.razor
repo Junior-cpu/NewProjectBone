@@ -1,0 +1,99 @@
+﻿@page "/backing"
+@inject HardRepairService hardService
+
+<h3>Backing</h3>
+
+@if(repair?.Count == 0)
+{
+    <MatPaper Elevation="10" class="paper">Não há dados...</MatPaper>
+  
+    
+   
+}
+else
+{
+    <MatTable Items="@repair" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+              ApiUrl="" FilterByColumnName="Cliente" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap tablee" >
+
+        <MatTableHeader>
+            <th>Serial</th>
+            <th>Partnumber</th>
+            <th>Modelo</th>
+            <th>Cliente</th>
+            <th>Unit Status</th>
+            <th>Unit State</th>
+            <th>Estação</th>
+            <th>Data</th>
+            <th>Aging</th>
+        </MatTableHeader>
+        <MatTableRow>
+
+            <td>@context.Serial_Number</td>
+            <td>@context.Part_Number</td>
+            <td>@context.Modelo</td>
+            <td>@context.Cliente</td>
+            <td>@context.Unit_Status</td>
+            <td>@context.Unit_State</td>
+            <td>@context.Station</td>
+            <td>@context.Update_Date</td>
+            <td>@context.Aging</td>
+
+        </MatTableRow>
+    </MatTable>
+   
+}
+
+
+@code {
+
+    private List<HardRepairModel>? repair;
+    private List<HardRepairModel>? repair1;
+    private List<HardRepairModel>? results;
+    private HardRepairModel repairr = new HardRepairModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        repair = await hardService.GetBacking();
+
+        var dataAtual = DateTime.Today;
+
+        var repair1 =   repair.Select(b=> new HardRepairModel
+        {
+
+            Serial_Number = b.Serial_Number,
+            Part_Number = b.Part_Number,
+            Modelo = b.Modelo,
+            Cliente = b.Cliente,
+            Unit_Status = b.Unit_Status,
+            Unit_State = b.Unit_State,
+            Station = b.Station,
+            Update_Date = b.Update_Date,
+            Aging = dataAtual.Subtract(b.Update_Date.Date).Days
+
+            }).ToList();
+
+        repair = repair1;
+    }
+}
+
+
+<style>
+    .tabela{
+        width:100% !important;
+    }
+    .paper{
+        width:100%;
+        height:100px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        align-content:center;
+        margin-top:70px;
+        margin-bottom:39%;
+        overflow:auto;
+    }
+   .page{
+       background-color:#F7F7F7;
+   }
+</style>
+

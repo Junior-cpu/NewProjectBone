@@ -1,0 +1,57 @@
+﻿@page "/hardrepairSevenDays"
+@inject HardRepairService hardService
+@inject NavigationManager Navigation
+
+
+<h3 class="mb-5">Hard Repair - últimos 7 dias</h3>
+
+
+
+@if (repair != null)
+{
+    <MatTable Items="@repair" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+              ApiUrl="" FilterByColumnName="Cliente" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+        <MatTableHeader>
+            <th>Serial</th>
+            <th>Partnumber</th>
+            <th>Modelo</th>
+            <th>Cliente</th>
+            <th>Unit Status</th>
+            <th>Unit State</th>
+            <th>Estação</th>
+            <th>Data</th>
+            <th>Aging</th>
+        </MatTableHeader>
+        <MatTableRow>
+            @*   <td>@String.Format("{0:d}", @context.Id)</td> *@
+            <td>@context.Serial_Number</td>
+            <td>@context.Part_Number</td>
+            <td>@context.Modelo</td>
+            <td>@context.Cliente</td>
+            <td>@context.Unit_Status</td>
+            <td>@context.Unit_State</td>
+            <td>@context.Station</td>
+            <td>@context.Update_Date</td>
+            <td>@context.Aging</td>
+
+        </MatTableRow>
+    </MatTable>
+}
+
+
+@code {
+
+    private List<HardRepairModel>? repair;
+    private HardRepairModel repairr = new HardRepairModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        repair = await hardService.GetSevenDays();
+    }
+}
+<style>
+    .page {
+        background-color: #F7F7F7;
+    }
+</style>
