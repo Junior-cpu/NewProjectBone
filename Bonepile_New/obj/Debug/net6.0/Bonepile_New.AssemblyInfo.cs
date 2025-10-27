@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Bonepile_New")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb21bf33e9d49b3ab5f479102edac64f9a0f7eae")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bonepile_New")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bonepile_New")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

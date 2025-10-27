@@ -1,6 +1,6 @@
 ﻿@page "/armariobone"
 @using System.ComponentModel.DataAnnotations
-
+    @inject NavigationManager navigation
 
 
 @inject Armario_BoneService boneService
@@ -9,6 +9,7 @@
 @inject BancoContext bancoContext
 @inject BancoContext1 bancoContext1
 @inject IJSRuntime JS
+@inject IMatToaster Toaster
 
 
 <main id="mainContent">
@@ -134,35 +135,26 @@
 
                 <MatButton Unelevated="true" Style="width:165px;background:#0aabba" OnClick="AbrirModalEntrada">Board In</MatButton>
 
+                <MatButton Unelevated="true" Style="width:165px;background:#0aacca" OnClick="AbrirModalEntradaLista">Board In Lista</MatButton>
 
 
-
-                <MatButton Unelevated="true" Style="width:165px;background:#f76157">Board Out</MatButton>
-
+                <MatButton Unelevated="true" Style="width:165px;background:#f76157" OnClick="AbrirModalSaida">Board Out</MatButton>
 
 
+                <MatButton Unelevated="true" Style="width:165px;background:#faba32" OnClick="AbrirModalStatus">Alterar Status</MatButton>
 
 
+                <MatButton Unelevated="true" Style="width:165px;background:#cdbdae" OnClick="AbrirModalReport">Report IN</MatButton>
 
-                <MatButton Unelevated="true" Style="width:165px;background:#faba32">Alterar Status</MatButton>
+                <MatButton Unelevated="true" Style="width:165px;background:#cdbdae" OnClick="AbrirModalReportOut">Report OUT</MatButton>
 
-
-
-
-
-                <MatButton Unelevated="true" Style="width:165px;background:#cdbdae">Reports</MatButton>
-
-
-
-                <MatButton Unelevated="true" Style="width:165px;background:#038bbb">Inventario</MatButton>
-                    
-  
-
+                <MatButton Unelevated="true" Style="width:165px;background:#038bbb" Link="boneinventario">Inventario</MatButton>
+              
             </div>
         </div>
     </div>
 </div>                    
-                           
+
 
 <table style="text-align:center;margin-bottom:10px">
     <thead>
@@ -541,9 +533,9 @@
 
 
 <Modal Title="Entrada de placas" IsVisible="@mostrarModalEntrada" OnClose="@FecharModalEntrada" >
-    @if (resultado != null)
+    @if (contexto != null)
     {
-        <EditForm Model="resultado" OnValidSubmit="OnValidSubmit">
+        <EditForm Model="contexto" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
 
             <div class="mat-layout-grid">
@@ -551,43 +543,49 @@
 
                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
                         <p>
-                        <MatTextField Label="Serialnumber" @bind-Value="serial"   OnFocusOut="@(() => BuscaInfo(@serial))"/>
+                        <MatTextField Label="Serialnumber" @bind-Value="@Serial_Number"   OnFocusOut="@(() => BuscaInfo(@Serial_Number))"/>
                           
                         </p>
                     </div>
                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
                         <p>
-                            <MatTextField Label="Partnumber" @bind-Value="@partnumber" ReadOnly/>
+                            <MatTextField Label="Partnumber" @bind-Value="contexto.Part_Number" ReadOnly/>
                
                         </p>
                     </div>
 
                        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
                         <p>
-                            <MatTextField Label="Cliente" @bind-Value="@cliente"  ReadOnly/>
+                            <MatTextField Label="Cliente" @bind-Value="contexto.Cliente"  ReadOnly/>
                         </p>
                     </div>
                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
                         <p>
-                            <MatTextField Label="Modelo" @bind-Value="@modelo" ReadOnly/>
+                            <MatTextField Label="Modelo" @bind-Value="contexto.Modelo" ReadOnly/>
                         </p>
                     </div>
 
            
-                   <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
-                        <p>
-                             <MatTextField Label="Falha" @bind-Value="@falha" />
+
+                      <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                         <p>
+                             <MatTextField Label="Falha" @bind-Value="contexto.Falha"/>
                         </p>
-                    </div>
+                    
+                     </div>
+       
+                   
                          <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
-                        <p>
-                             <MatTextField Label="Local" @bind-Value="@local" disabled="@(falha != "" ? false : true)" minlength="3" maxlength="3" />
-                        </p>
-                    </div>
+                            <p>
+                                 <MatTextField Label="Local" @bind-Value="contexto.Local"  maxlength="4" />
+                            </p>
+                        </div>
+             
+
                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
-                         <MatSelect Label="Selecione uma ação" @bind-Value="@acao" [disabled]="@(local != "" ? false : true)">
+                         <MatSelect Label="Selecione uma ação" @bind-Value="contexto.Acao">
                             <MatOptionString Value="" ></MatOptionString>
-                            <MatOptionString Value="ANÁLISE">ANÁLISE</MatOptionString>
+                            <MatOptionString Value="ANÁLISE">ANALISE</MatOptionString>
                             <MatOptionString Value="AGUARDANDO COMPONENTE">AGUARDANDO COMPONENTE</MatOptionString>
                             <MatOptionString Value="A/C ENGENHARIA">A/C ENGENHARIA</MatOptionString>
                             <MatOptionString Value="BACKING">BACKING</MatOptionString>
@@ -596,8 +594,8 @@
                             <MatOptionString Value="TESTE">TESTE</MatOptionString>
                         </MatSelect>
                     </div>
-              
 
+   
                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12" style="display:flex;justify-content:center">
                          <MatButton Type="submit" Raised="true" Style="width:500px;background:#40957f" disabled="@(acao != null ? false : true)">Salvar</MatButton>
                        @*   <MatButton Raised="true" Style="width:300px;background:#878286" OnClick="FecharModalEntrada" disabled="@(acao != null ? false : true)">Cancelar</MatButton> *@
@@ -605,10 +603,466 @@
                 </div>
             
             </div>
-
         </EditForm>
+    }
+
+</Modal>
+                         
+          
+<Modal Title="Saida de placas" IsVisible="@mostrarModalSaida" OnClose="@FecharModalSaida">
+    @if (contextoOut != null)
+    {
+        <EditForm Model="contextoOut" OnValidSubmit="OnExitSubmit">
+            <DataAnnotationsValidator />
+
+            <div class="mat-layout-grid">
+                <div class="mat-layout-grid-inner">
+
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        <p>
+                            <MatTextField Label="Serialnumber" @bind-Value="@serial" OnFocusOut="@(() => BuscaInfoSaida(@serial))" />
+
+                        </p>
+                    </div>
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        <p>
+                            <MatTextField Label="Partnumber" @bind-Value="contexto.Part_Number" ReadOnly />
+
+                         </p>
+                     </div>
+
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                         <p>
+                             <MatTextField Label="Cliente" @bind-Value="contexto.Cliente" ReadOnly />
+                         </p>
+                     </div>
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                         <p>
+                             <MatTextField Label="Modelo" @bind-Value="contexto.Modelo" ReadOnly />
+                         </p>
+                     </div>
+
+
+
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                         <p>
+                             <MatTextField Label="Status" @bind-Value="contexto.Acao" ReadOnly />
+                         </p>
+                     </div>
+
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                  
+                         <p>
+                             <MatTextField Label="Local" @bind-Value="contexto.Local" ReadOnly  />
+                         </p>
+
+                     </div>
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
+                         <MatSelect Label="Selecione uma ação" @bind-Value="contextoOut.Acao">
+                             <MatOptionString Value=""></MatOptionString>
+                             <MatOptionString Value="PASS">PASS</MatOptionString>
+                             <MatOptionString Value="SCRAP">SCRAP</MatOptionString>
+                         
+                         </MatSelect>
+                     </div>
+         
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12" style="display:flex;justify-content:center">
+                         <MatButton Type="submit" Raised="true" Style="width:500px;background:#FF0000">Deletar</MatButton>
+                 
+                     </div>
+                 </div>
+
+             </div>
+         </EditForm>
     }
 
 </Modal>
 
 
+<Modal Title="Entrada de em lista" IsVisible="@mostrarModalEntradaLista" OnClose="@FecharModalEntradaLista">
+    @if (contextoLista != null)
+    {
+        <EditForm Model="contextoLista" OnValidSubmit="OnValidSubmitLista">
+            <DataAnnotationsValidator />
+
+            <div class="mat-layout-grid">
+                <div class="mat-layout-grid-inner">
+           
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        <p id="serial">
+                            <MatTextField Label="Serialnumber"  @bind-Value="@Serial_Number" OnFocusOut="@(() => BuscaInfo1(@Serial_Number))"  Style="font-size:.7rem" required />
+
+                        </p>
+                    </div>
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        <p id="local">
+                            <MatTextField Label="Local"  @bind-Value="contextoLista.Local" Style="text-transform:uppercase;font-size:.7rem" required/>
+
+                        </p>
+                    </div>
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                        @if(contextoLista.Falha.ToUpper()== "FAILURE")
+                        {
+                             <p id="falha">
+                                    <MatTextField Label="digite a falha" @bind-Value="contextoLista.Falha" Style="text-transform:uppercase;font-size:.7rem" required/>
+                            </p>
+                          
+                        }
+                        else
+                        {
+                             <p>
+                                <MatTextField Label="falha" @bind-Value="contextoLista.Falha"  Style="font-size:.7rem"/>
+
+                            </p>
+                        }
+                  
+                    </div>
+                      <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3" id="seletor">
+                        <MatSelect Label="Selecione uma ação" @bind-Value="contextoLista.Acao" Style="font:.7rem" required>
+                            <MatOptionString Value=""></MatOptionString>
+                             <MatOptionString Value="ANÁLISE">ANALISE</MatOptionString>
+                             <MatOptionString Value="AGUARDANDO COMPONENTE">AGUARDANDO COMPONENTE</MatOptionString>
+                             <MatOptionString Value="A/C ENGENHARIA">A/C ENGENHARIA</MatOptionString>
+                             <MatOptionString Value="BACKING">BACKING</MatOptionString>
+                             <MatOptionString Value="REPARO">REPARO</MatOptionString>
+                             <MatOptionString Value="SCRAP">SCRAP</MatOptionString>
+                             <MatOptionString Value="TESTE">TESTE</MatOptionString>
+                         </MatSelect>
+                     </div>
+
+                     @if(boneIn == null)
+                     {
+                         <div id="loader-container">
+                              <div id="loader-icon-wrap">
+                                   <div id="loader-icon"></div>
+                              </div>
+                               <div id="loader">
+                                   <span id="loader-inner"></span>
+                               </div>
+                         </div>
+                     }
+                     else
+                     {
+
+                    
+                         <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                            <table class="table  table-hover"  tyle="overflow-x: auto; margin: 16px;text-transform:uppercase;font-size:.6rem;width:100%" Elevation="0">
+		                            <thead>
+			                            <tr>
+				                            <th style="font-size:.6rem;width:50px">Local</th>
+				                            <th style="font-size:.6rem;width:80px">Serialnumber</th>
+				                            <th style="font-size:.6rem;width:80px">Partnumber</th>
+				                            <th style="font-size:.6rem;width:60px">Cliente</th>
+				                            <th style="font-size:.6rem;width:80px">Modelo</th>
+				                            <th style="font-size:.6rem;width:80px">Ação</th>
+                                            <th style="font-size:.6rem;width:100px">Falha</th>
+							                      
+			                            </tr>
+		                            </thead>
+		                            <tbody style="font-size:.6rem">
+			                            @foreach (var lista in listIn)
+			                            {
+				                            <tr>
+                                           @*  <td><input type="text" @bind = "contextoLista.Local" maxlength="4" style="font-size:.6rem;height:5px !important;width:50px;height:15px !important;border:solid 1px #e9e9e9;text-align:center !important;text-transform:uppercase" /></td> *@
+                                                <td style="white-space: nowrap;text-overflow:ellipsis;text-transform:uppercase">@lista.Local</td>
+					                            <td style="white-space: nowrap;text-overflow:ellipsis">@lista.Serial_Number</td>
+					                            <td style="white-space: nowrap;text-overflow:ellipsis">@lista.Part_Number</td>
+					                            <td style="white-space: nowrap;text-overflow:ellipsis">@lista.Cliente</td>
+					                            <td style="white-space: nowrap;text-overflow:ellipsis">@lista.Modelo</td>
+                                                <td style="white-space: nowrap;text-overflow:ellipsis">@lista.Acao</td>
+                                                <td style="white-space: nowrap;text-overflow:ellipsis;text-transform:uppercase">@lista.Falha</td>
+					                            
+                                           @*  <td><input type="text" @bind = "contextoLista.Falha" maxlength="4" style="font-size:.6rem;height:5px !important;width:100px;height:20px !important;border:solid 1px #e9e9e9;text-align:center !important;text-transform:uppercase" /></td> *@
+                                        </tr>
+			                            }
+		                            </tbody>
+	                            </table>
+                          </div>
+                    }
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12" style="display:flex;justify-content:center">
+                         <MatButton Type="submit" Raised="true" Style="width:500px;background:#40957f" disabled="@(acao != null ? false : true)">Salvar</MatButton>
+                         @*   <MatButton Raised="true" Style="width:300px;background:#878286" OnClick="FecharModalEntrada" disabled="@(acao != null ? false : true)">Cancelar</MatButton> *@
+                      
+                     </div>
+                 </div>
+
+             </div>
+         </EditForm>
+    }
+    <button @onclick="SalvarLista">Salvar Lista no Banco</button>
+</Modal>
+
+<Modal Title="Alterar Status " IsVisible="@mostrarModalStatus" OnClose="@FecharModalStatus">
+    @if (contextoStatus != null)
+    {
+        <EditForm Model="contextoStatus" OnValidSubmit="AlterStatus" >
+            <DataAnnotationsValidator />
+
+            <div class="mat-layout-grid">
+                <div class="mat-layout-grid-inner">
+
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-2">
+                        <p>
+                            <MatTextField Label="Serialnumber" @bind-Value="@serial" OnFocusOut="@(() => BuscaInfoStatus(@serial))" />
+
+                        </p>
+                    </div>
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-2">
+                        <p>
+                            <MatTextField Label="Partnumber" @bind-Value="contexto.Part_Number" ReadOnly />
+
+                         </p>
+                     </div>
+
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3">
+                         <p>
+                             <MatTextField Label="Status" @bind-Value="contexto.Acao" ReadOnly />
+                         </p>
+                     </div>
+
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-2">
+
+                         <p>
+                             <MatTextField Label="Local" @bind-Value="contextoStatus.Local" />
+                         </p>
+
+                     </div>
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-3" id="seletor">
+                         <MatSelect Label="Selecione uma ação" @bind-Value="contextoStatus.Acao" Style="font:.7rem" required>
+                             <MatOptionString Value=""></MatOptionString>
+                             <MatOptionString Value="ANÁLISE">ANALISE</MatOptionString>
+                             <MatOptionString Value="AGUARDANDO COMPONENTE">AGUARDANDO COMPONENTE</MatOptionString>
+                             <MatOptionString Value="A/C ENGENHARIA">A/C ENGENHARIA</MatOptionString>
+                             <MatOptionString Value="BACKING">BACKING</MatOptionString>
+                             <MatOptionString Value="REPARO">REPARO</MatOptionString>
+                             <MatOptionString Value="SCRAP">SCRAP</MatOptionString>
+                             <MatOptionString Value="TESTE">TESTE</MatOptionString>
+                         </MatSelect>
+                     </div>
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12" style="display:flex;justify-content:center;margin-top:30px">
+                         <MatButton Type="submit" Raised="true" Style="width:500px;background:#FABF42">Alterar</MatButton>
+
+                     </div>
+                 </div>
+
+             </div>
+         </EditForm>
+    }
+
+</Modal>
+
+<Modal Title="Report In" IsVisible="@mostrarModalReport" OnClose="@FecharModalReport">
+    @if (uniao != null)
+    {
+        <EditForm Model="uniao"   OnValidSubmit="Reports">
+            <DataAnnotationsValidator />
+
+            <div class="mat-layout-grid">
+                <div class="mat-layout-grid-inner">
+                
+
+          
+
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                        <p>
+                            <MatTextField Label="Serialnumber" @bind-Value="@serialnumber"  />
+
+                        </p>
+                    </div>
+                       <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                         <p>
+                            <MatTextField Label="Cliente" @bind-Value="@client" />
+                         </p>
+                     </div>
+                 
+
+                          <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4" id="seletor">
+                             <MatSelect Label="Selecione uma ação" @bind-Value="@accao" Style="font:.7rem" required>
+                                 <MatOptionString Value=""></MatOptionString>
+                                 <MatOptionString Value="ANALISE">ANALISE</MatOptionString>
+                                 <MatOptionString Value="AGUARDANDO COMPONENTE">AGUARDANDO COMPONENTE</MatOptionString>
+                                 <MatOptionString Value="A/C ENGENHARIA">A/C ENGENHARIA</MatOptionString>
+                                 <MatOptionString Value="BACKING">BACKING</MatOptionString>
+                                 <MatOptionString Value="REPARO">REPARO</MatOptionString>
+                                 <MatOptionString Value="SCRAP">SCRAP</MatOptionString>
+                                 <MatOptionString Value="TESTE">TESTE</MatOptionString>
+                             </MatSelect>
+                        </div>
+
+                    
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                        <p>
+                            <MatDatePicker @bind-Value="dataInicio" Label="Data Início"  />
+
+                        </p>
+                    </div>
+             @*        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
+                        <p>
+                            <MatDatePicker @bind-Value="dataFim" Label="Data Fim" class="inpu" />
+
+                        </p>
+                    </div> *@
+
+      
+                  
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12" style="display:flex;justify-content:center;margin-top:30px">
+                         <MatButton Type="submit" Raised="true" Style="width:500px;background:#D1C2B4">Consultar</MatButton>
+                       
+
+                     </div>
+                 </div>
+
+             </div>
+         </EditForm>
+        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12" style="display:flex;justify-content:center;">
+            <MatButton  Style="width:500px;background:#40E0D0;color:#fff" OnClick="Limpar">Limpar</MatButton>
+        </div>
+    }
+
+
+
+
+    @if (uniao != null)
+    {
+        <MatTable Items="@uniao" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serialnumber" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Posição</th>
+                <th>SerialNumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Data Entrada</th>
+                <th>Falha</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Modelo</th>
+                <th>Aging</th>
+            </MatTableHeader>
+            <MatTableRow>
+                @*   <td>@String.Format("{0:d}", @context.Id)</td> *@
+                 <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Entrada</td>
+                <td>@context.Falha</td>
+                <td>@context.Valor</td>
+                <td>@context.Acao</td>
+                <td>@context.Modelo</td>
+                <td>@context.Aging</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+</Modal>
+
+
+
+<Modal Title="Report Out" IsVisible="@mostrarModalReportOut" OnClose="@FecharModalReportOut">
+    @if (uniaoOut != null)
+    {
+        <EditForm Model="uniaoOut"   OnValidSubmit="Report">
+            <DataAnnotationsValidator />
+
+            <div class="mat-layout-grid">
+                <div class="mat-layout-grid-inner">
+             
+
+           
+
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                        <p>
+                            <MatTextField Label="Serialnumber" @bind-Value="@serialnumber"  />
+
+                        </p>
+                    </div>
+                       <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                         <p>
+                            <MatTextField Label="Cliente" @bind-Value="@client"  />
+                         </p>
+                     </div>
+               
+                        
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                            <MatSelect Label="Selecione uma ação" @bind-Value="@accao">
+                                <MatOptionString Value=""></MatOptionString>
+                                <MatOptionString Value="PASS">PASS</MatOptionString>
+                                <MatOptionString Value="SCRAP">SCRAP</MatOptionString>
+
+                            </MatSelect>
+                    </div>
+                    
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
+                        <p>
+                            <MatDatePicker @bind-Value="dataInicio" Label="Data Início" />
+
+                        </p>
+                    </div>
+                    <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
+                        <p>
+                            <MatDatePicker @bind-Value="dataFim" Label="Data Fim" class="inpu" />
+
+                        </p>
+                    </div>
+      
+                  
+                     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12" style="display:flex;justify-content:center;margin-top:30px">
+                         <MatButton Type="submit" Raised="true" Style="width:500px;background:#D1C2B4">Consultar</MatButton>
+                         
+
+                     </div>
+                 </div>
+
+             </div>
+         </EditForm>
+       <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12" style="display:flex;justify-content:center;">
+            <MatButton Style="width:500px;background:#40E0D0;color:#fff" OnClick="Limpar">Limpar</MatButton>
+        </div>
+    }
+
+
+
+
+    @if (uniaoOut != null)
+    {
+        <MatTable Items="@uniaoOut" LoadInitialData="true" Striped="true" RequestApiOnlyOnce="true" AllowSelection="true" RowClass="tester"
+                  ApiUrl="" FilterByColumnName="Serialnumber" DebounceMilliseconds="150" Class="mat-elevation-z5 mt-xxl-5 text-nowrap">
+
+            <MatTableHeader>
+                <th>Posição</th>
+                <th>SerialNumber</th>
+                <th>Partnumber</th>
+                <th>Cliente</th>
+                <th>Data Entrada</th>
+                <th>Falha</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Modelo</th>
+                <th>Aging</th>
+            </MatTableHeader>
+            <MatTableRow>
+                @*   <td>@String.Format("{0:d}", @context.Id)</td> *@
+                 <td>@context.Local</td>
+                <td>@context.Serial_Number</td>
+                <td>@context.Part_Number</td>
+                <td>@context.Cliente</td>
+                <td>@context.Entrada</td>
+                <td>@context.Falha</td>
+                <td>@context.Valor</td>
+                <td>@context.Acao</td>
+                <td>@context.Modelo</td>
+                <td>@context.Aging</td>
+
+            </MatTableRow>
+        </MatTable>
+    }
+</Modal>
+<ul style="display:none">
+    @foreach (var item in boneIn)
+    {
+        <li>@item.Serial_Number</li>
+ 
+       
+    }
+</ul>

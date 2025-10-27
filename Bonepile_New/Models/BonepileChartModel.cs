@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bonepile_New.Models
 {
     [Table("UDTLOOK_UP_BONE_GERAL_HISTORICO_CHART")]
     public class BonepileChartModel
     {
+        [Key]
         public long Id { get; set; }
         public string Almoxarifado { get; set; } = string.Empty;
         public string Item { get; set; } = string.Empty;

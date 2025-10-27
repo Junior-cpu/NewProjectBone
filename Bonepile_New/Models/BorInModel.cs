@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bonepile_New.Models
 {
     [Table("UDTBONE_PLACAS_IN_BOR_TEST")]
     public class BorInModel
     {
+        [Key]
         public long Id { get; set; }
         public string Local { get; set; } = string.Empty;
         public string Serial_Number { get; set; } = string.Empty;

@@ -1,7 +1,12 @@
-﻿namespace Bonepile_New.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bonepile_New.Models
 {
+    [Table("UDTBONE_HISTORICO_OUT_CONFIRM_TEST")]
     public class ConfirmOutModel
     {
+        [Key]
         public long Id { get; set; }
         public string Local { get; set; } = string.Empty;
         public string Serial_Number { get; set; } = string.Empty;

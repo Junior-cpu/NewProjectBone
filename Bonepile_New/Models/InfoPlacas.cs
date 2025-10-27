@@ -6,7 +6,7 @@ namespace Bonepile_New.Models;
 public class InfoPlacas
 {
 
-    [Key]
+    public long Id { get; set; }
     public string SerialNumber { get; set; } = string.Empty;
     public string State { get; set; } = string.Empty;
     public string StateDescription { get; set; } = string.Empty;

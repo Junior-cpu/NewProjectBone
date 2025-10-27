@@ -60,12 +60,15 @@ public partial class Index
     private string? MyColorQty4;
 
 
+    private bool isDataLoaded = false;
+
     protected override async Task OnInitializedAsync()
     {
 
         //=================================801==============================================
 
         cards = await bonepileService.GetCards();
+        isDataLoaded = true;
 
         var total = cards.Select(p =>
         {

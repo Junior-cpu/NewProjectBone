@@ -48,5 +48,56 @@
     <script src="station.js"></script>
     <script src="cliente.js"></script>
     <script src="clienteGeral.js"></script>
+    <script src="~/LocalStorage.js"></script>
+
+
+
+
+@*     <script>
+        function focusBarcodeInput() {
+            const input = document.getElementById('barcodeInput');
+            if (input) input.focus();
+        }
+    </script> *@
+
+@*       <script>
+       
+          function ScannerFunction() {
+
+            $("#barcodeInput").keyup(function (event) {
+                if (event.key === "Enter") {
+                    var serial = $('#barcodeInput').val();
+                    const resultado = await DotNet.invokeMethodAsync('Bonepile_New', 'HandleKeyUp', serial);
+                }
+            });
+          }
+     
+    </script> *@
+
+
+<script>
+        function simularEnter() {
+            var event = new KeyboardEvent('keydown', {
+                key: 'Enter',
+                code: 'Enter',
+                keyCode: 13, // Código ASCII para Enter
+                which: 13,
+                bubbles: true,
+                cancelable: true
+            });
+
+            // Dispara o evento em um elemento específico, como um campo de entrada ou um botão
+            // Para simular a ação em um campo de input específico, substitua "document.querySelector()"
+            var meuCampo = document.querySelector('input'); // Ou o seletor do seu elemento
+            if (meuCampo) {
+                meuCampo.dispatchEvent(event);
+            }
+        }
+
+
+</script>
+
+
+  
 </body>
 </html>

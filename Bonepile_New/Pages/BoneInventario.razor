@@ -1,0 +1,238 @@
+﻿@page "/boneinventario"
+@using System.Timers;
+@inject Armario_BoneService boneService
+@inject BancoContext context
+@inject IJSRuntime JS
+
+<h3 style="color:#8487a4;font-weight:700">Inventario</h3>
+<div class="row" style="display:flex;justify-content:space-around">
+    <div class="" style="display:flex;justify-content:space-around">
+        <div class="col-md-8">
+            <input type="text" @bind-value="serialnumber" @bind-value:event="oninput" @onkeydown="@OnValueChange" autofocus />
+        </div>
+        <label style="color:#8487a4;font-weight:700">Total:@total</label>
+    </div>
+</div>
+
+
+<div class="row" style="display:flex;justify-content:space-around;margin-top:10px">
+    <div class="card" style="width:33%;font-size:12px;display:flex;padding:0">
+        <div style="border-bottom-color: lightgreen;border-bottom: 2px solid lightgreen;background-color:#f8f9fc;padding:15px;color:#8587a4">Com  locação Ok</div>
+        <table id="INV" class="card-table table" style="font-size: 11px">
+            <thead>
+                <tr>
+                    <th style="width:10px">GAVETA</th>
+                    <th style="width:10px">SERIAL NUMBER</th>
+                    <th style="width:10px">PART NUMBER</th>
+                </tr>
+            </thead>
+
+            <tbody class="searchable">
+
+                @foreach (var bone in pcb)
+                {
+                    <tr id="@bone.Id" class="linhaInv">
+                        <td>@bone.Local</td>
+                        <td>@bone.Serial_Number</td>
+                        <td>@bone.Part_Number</td>
+                        
+
+                    </tr>
+                }
+    
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" style="width: 32%; font-size: 13px;padding:0">
+        <div style="border-bottom-color: lightgrey;border-bottom: 2px solid lightgrey;padding:15px;background:#f8f9fc;color:#8587a4">Inventário</div>
+        <table id="INV" class="card-table table" style="font-size: 11px;">
+            <thead>
+                <tr>
+                    <th style="width:10px">GAVETA</th>
+                    <th style="width:10px">SERIAL NUMBER</th>
+                    <th style="width:10px">PART NUMBER</th>
+                </tr>
+            </thead>
+
+            <tbody class="searchable">
+                @foreach (var bon in bone)
+                {
+                    <tr>
+                        <td>@bon.Local</td>
+                        <td>@bon.Serial_Number</td>
+                        <td>@bon.Part_Number</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" style="width: 33%; font-size: 13px;padding:0">
+        <div style="border-bottom-color: tomato;border-bottom: 2px solid tomato;padding:15px;background:#f8f9fc;color:#8587a4">Sem locação</div>
+        <table id="INV" class="card-table table" style="font-size: 11px">
+            <thead>
+                <tr>
+                    <th style="width:10px">GAVETA</th>
+                    <th style="width:10px">SERIAL NUMBER</th>
+                    <th style="width:10px">PART NUMBER</th>
+                </tr>
+            </thead>
+
+            <tbody class="searchable">
+                @foreach (var bone in boneLoc)
+                {
+                    <tr>
+                        <td>não alocado</td>
+                        <td>@bone.SerialNumber</td>
+                        <td>@bone.Partnumber</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+@code {
+
+    private string LastProcessedValue { get; set; } = "Nenhum";
+
+    private List<BoneInModel>? boneIn { get; set; } = new List<BoneInModel>();
+    private List<BoneInModel>? bone { get; set; } = new List<BoneInModel>();
+    private List<InfoPlacas>? boneLoc { get; set; } = new List<InfoPlacas>();
+    private List<BoneInModel>? pcb { get; set; } = new List<BoneInModel>();
+    private BoneInModel lista = new();
+    private BoneInModel listaLoc = new();
+    private InfoPlacas Loc = new();
+    private InfoPlacas testes = new();
+    private InfoPlacas result = new();
+    private Timer timerObj;
+
+
+    private int total;
+    private string serialnumber = "";
+    private string serial = "";
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //boneIn = await boneService.GetAll();
+        bone = await boneService.GetAll();
+        // boneLoc = await boneService.GetAll2();
+
+        timerObj = new Timer(1500);
+        timerObj.Elapsed += OnUserFinish;
+        timerObj.AutoReset = false;
+
+        total = context.UDTBONE_PLACAS_IN_BONE.Count();
+    }
+
+
+    private void OnValueChange(KeyboardEventArgs e)
+    {
+        // remove previous one
+        timerObj.Stop();
+        // new timer
+        timerObj.Start();
+    }
+
+
+    private async void OnUserFinish(Object source, ElapsedEventArgs e)
+    {
+
+        serial = serialnumber.Trim();
+        
+
+        lista = context.UDTBONE_PLACAS_IN_BONE.FirstOrDefault(x => x.Serial_Number == serialnumber.Trim().ToLower());
+        if (lista != null)
+        {
+            pcb.Add(lista);
+            lista = new();
+
+            serialnumber = "";
+
+        }
+        else
+        {
+            if(serialnumber != "")
+            { 
+                var teste = boneService.BuscarInfo(serialnumber);
+                await Task.Delay(3000);
+            
+
+                Loc = context.InfoPlacas.FirstOrDefault(x => x.SerialNumber == serialnumber.Trim().ToLower());
+
+         
+
+                boneLoc.Add(Loc);
+
+                Loc = new();
+
+                serialnumber = "";
+                
+                JS.InvokeVoidAsync("simularEnter");
+                return;
+            }
+            else
+            {
+                return;
+            }
+        }
+        JS.InvokeVoidAsync("simularEnter");
+
+       
+    }
+
+
+
+
+    public class SimuladorDeTecla
+    {
+        private readonly IJSRuntime _jsRuntime;
+
+        public SimuladorDeTecla(IJSRuntime jsRuntime)
+        {
+            _jsRuntime = jsRuntime;
+        }
+
+        public async Task SimularEnterAsync(string elementId)
+        {
+            await _jsRuntime.InvokeVoidAsync("simularEnter", elementId);
+        }
+    }
+
+
+}
+
+
+
+
+       
+
+
+              
+    
+
+
+
+
+<style>
+    table {
+        color: #8487a4 !important;
+    }
+
+        table th {
+            color: #8487a4 !important;
+            font-weight: 700;
+        }
+
+    td, th {
+        white-space: nowrap;
+    }
+</style>

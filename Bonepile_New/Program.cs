@@ -37,6 +37,19 @@ builder.Services.AddDbContext<BancoContext1>(options =>
 
 });
 
+
+  
+ builder.Services.AddMatToaster(config =>
+    {
+        config.Position = MatToastPosition.BottomRight;
+        config.PreventDuplicates = true;
+        config.NewestOnTop = true;
+        config.ShowCloseButton = true;
+        config.MaximumOpacity = 95;
+        config.VisibleStateDuration = 3000;
+    });
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

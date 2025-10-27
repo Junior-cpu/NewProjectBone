@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\Bonepile_New.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\saotpaul\\Desktop\\Bonepile_New1\\Bonepile_New\\wwwroot\\LocalStorage.js",
+      "PackagePath": "staticwebassets\\LocalStorage.js"
+    },
+    {
       "Id": "C:\\Users\\saotpaul\\Desktop\\Bonepile_New1\\Bonepile_New\\wwwroot\\chart.js",
       "PackagePath": "staticwebassets\\chart.js"
     },
@@ -103,6 +107,10 @@
     {
       "Id": "C:\\Users\\saotpaul\\Desktop\\Bonepile_New1\\Bonepile_New\\wwwroot\\images\\rosto-triste.png",
       "PackagePath": "staticwebassets\\images\\rosto-triste.png"
+    },
+    {
+      "Id": "C:\\Users\\saotpaul\\Desktop\\Bonepile_New1\\Bonepile_New\\wwwroot\\scanner.js",
+      "PackagePath": "staticwebassets\\scanner.js"
     },
     {
       "Id": "C:\\Users\\saotpaul\\Desktop\\Bonepile_New1\\Bonepile_New\\wwwroot\\station.js",
